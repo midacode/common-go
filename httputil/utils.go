@@ -54,6 +54,9 @@ func ErrorResponse(w http.ResponseWriter, err error) error {
 	case errors.Is(err, ErrNotFound):
 		return WriteJSON(w, http.StatusNotFound, envelope{"error": err}, nil)
 
+	case errors.Is(err, ErrConflict):
+		return WriteJSON(w, http.StatusConflict, envelope{"error": err}, nil)
+
 	case errors.Is(err, ErrInternal):
 		return WriteJSON(w, http.StatusForbidden, envelope{"error": err}, nil)
 
