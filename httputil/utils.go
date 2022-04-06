@@ -40,28 +40,32 @@ func FailedValidationResponse(w http.ResponseWriter, r *http.Request, errors map
 	}, nil)
 }
 
+func errPayload(err error) envelope {
+	return envelope{"error": envelope{"message": err.Error()}}
+}
+
 func ErrorResponse(w http.ResponseWriter, err error) error {
 	switch {
 	case errors.Is(err, ErrBadRequest):
-		return WriteJSON(w, http.StatusBadRequest, envelope{"error": err}, nil)
+		return WriteJSON(w, http.StatusBadRequest, errPayload(err), nil)
 
 	case errors.Is(err, ErrUnauthorized):
-		return WriteJSON(w, http.StatusUnauthorized, envelope{"error": err}, nil)
+		return WriteJSON(w, http.StatusUnauthorized, errPayload(err), nil)
 
 	case errors.Is(err, ErrForbidden):
-		return WriteJSON(w, http.StatusForbidden, envelope{"error": err}, nil)
+		return WriteJSON(w, http.StatusForbidden, errPayload(err), nil)
 
 	case errors.Is(err, ErrNotFound):
-		return WriteJSON(w, http.StatusNotFound, envelope{"error": err}, nil)
+		return WriteJSON(w, http.StatusNotFound, errPayload(err), nil)
 
 	case errors.Is(err, ErrConflict):
-		return WriteJSON(w, http.StatusConflict, envelope{"error": err}, nil)
+		return WriteJSON(w, http.StatusConflict, errPayload(err), nil)
 
 	case errors.Is(err, ErrInternal):
-		return WriteJSON(w, http.StatusForbidden, envelope{"error": err}, nil)
+		return WriteJSON(w, http.StatusForbidden, errPayload(err), nil)
 
 	default:
-		return WriteJSON(w, http.StatusInternalServerError, envelope{"error": ErrInternal}, nil)
+		return WriteJSON(w, http.StatusInternalServerError, errPayload(ErrInternal), nil)
 	}
 }
 
