@@ -12,7 +12,3 @@ var (
 	ErrInternal     = errors.New("internal server error")
 	ErrConflict     = errors.New("conflict")
 )
-
-func IsUserError(err error) bool {
-	return errors.Is(err, ErrBadRequest) || errors.Is(err, ErrUnauthorized) || errors.Is(err, ErrForbidden) || errors.Is(err, ErrNotFound) || errors.Is(err, ErrInternal) || errors.Is(err, ErrConflict)
-}

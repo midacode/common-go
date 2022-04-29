@@ -1,5 +1,13 @@
 package validator
 
+type ValidationError struct {
+	Errors map[string]string
+}
+
+func (ve ValidationError) Error() string {
+	return "validation error"
+}
+
 type Validator struct {
 	Errors map[string]string
 }
@@ -12,6 +20,13 @@ func New() *Validator {
 // Valid returns true if the errors map doesn't contain any entries.
 func (v *Validator) Valid() bool {
 	return len(v.Errors) == 0
+}
+
+func (v *Validator) Error() error {
+	if v.Valid() {
+		return nil
+	}
+	return ValidationError{Errors: v.Errors}
 }
 
 // AddError adds an error message to the map (so long as no entry already exists for
