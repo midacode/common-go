@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"errors"
 	"net/http"
+
+	"github.com/midacode/common-go/validator"
 )
 
 func ReadJSON(r *http.Request, dst interface{}) error {
@@ -31,15 +33,6 @@ func WriteJSON(w http.ResponseWriter, status int, dst interface{}, headers http.
 
 type envelope map[string]interface{}
 
-func FailedValidationResponse(w http.ResponseWriter, r *http.Request, errors map[string]string) {
-	WriteJSON(w, http.StatusBadRequest, envelope{
-		"error": envelope{
-			"message": "validation error",
-			"errors":  errors,
-		},
-	}, nil)
-}
-
 func errPayload(err error) envelope {
 	return envelope{"error": envelope{"message": err.Error()}}
 }
@@ -48,6 +41,14 @@ func ErrorResponse(w http.ResponseWriter, err error) error {
 	switch {
 	case errors.Is(err, ErrBadRequest):
 		return WriteJSON(w, http.StatusBadRequest, errPayload(err), nil)
+
+	case errors.As(err, &validator.ValidationError{}):
+		return WriteJSON(w, http.StatusBadRequest, envelope{
+			"error": envelope{
+				"message": "validation error",
+				"errors":  err.(validator.ValidationError).Errors,
+			},
+		}, nil)
 
 	case errors.Is(err, ErrUnauthorized):
 		return WriteJSON(w, http.StatusUnauthorized, errPayload(err), nil)
