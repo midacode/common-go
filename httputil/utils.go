@@ -34,6 +34,12 @@ func WriteJSON(w http.ResponseWriter, status int, dst interface{}, headers http.
 type envelope map[string]interface{}
 
 func errPayload(err error) envelope {
+
+	uErr := errors.Unwrap(err)
+	if uErr != nil {
+		err = uErr
+	}
+
 	return envelope{"error": envelope{"message": err.Error()}}
 }
 
