@@ -13,7 +13,7 @@ func IsExpectedError(err error) bool {
 }
 
 func WrapFnError(err *error, format string, args ...interface{}) {
-	if *err != nil {
+	if *err != nil && !IsExpectedError(*err) {
 		s := fmt.Sprintf(format, args...)
 		*err = fmt.Errorf("%s: %w", s, *err)
 	}
