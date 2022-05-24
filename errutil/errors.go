@@ -1,8 +1,6 @@
-package httputil
+package errutil
 
-import (
-	"errors"
-)
+import "errors"
 
 var (
 	ErrBadRequest   = errors.New("bad request")

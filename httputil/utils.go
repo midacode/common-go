@@ -5,6 +5,7 @@ import (
 	"errors"
 	"net/http"
 
+	"github.com/midacode/common-go/errutil"
 	"github.com/midacode/common-go/validator"
 )
 
@@ -45,7 +46,7 @@ func errPayload(err error) envelope {
 
 func ErrorResponse(w http.ResponseWriter, err error) error {
 	switch {
-	case errors.Is(err, ErrBadRequest):
+	case errors.Is(err, errutil.ErrBadRequest):
 		return WriteJSON(w, http.StatusBadRequest, errPayload(err), nil)
 
 	case errors.As(err, &validator.ValidationError{}):
@@ -56,23 +57,23 @@ func ErrorResponse(w http.ResponseWriter, err error) error {
 			},
 		}, nil)
 
-	case errors.Is(err, ErrUnauthorized):
+	case errors.Is(err, errutil.ErrUnauthorized):
 		return WriteJSON(w, http.StatusUnauthorized, errPayload(err), nil)
 
-	case errors.Is(err, ErrForbidden):
+	case errors.Is(err, errutil.ErrForbidden):
 		return WriteJSON(w, http.StatusForbidden, errPayload(err), nil)
 
-	case errors.Is(err, ErrNotFound):
+	case errors.Is(err, errutil.ErrNotFound):
 		return WriteJSON(w, http.StatusNotFound, errPayload(err), nil)
 
-	case errors.Is(err, ErrConflict):
+	case errors.Is(err, errutil.ErrConflict):
 		return WriteJSON(w, http.StatusConflict, errPayload(err), nil)
 
-	case errors.Is(err, ErrInternal):
+	case errors.Is(err, errutil.ErrInternal):
 		return WriteJSON(w, http.StatusForbidden, errPayload(err), nil)
 
 	default:
-		return WriteJSON(w, http.StatusInternalServerError, errPayload(ErrInternal), nil)
+		return WriteJSON(w, http.StatusInternalServerError, errPayload(errutil.ErrInternal), nil)
 	}
 }
 
